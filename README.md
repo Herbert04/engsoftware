@@ -27,3 +27,5 @@ Regras de negócio:
 - Os usuários que utilizar débito como forma de pagámento terá um desconto de 5% 
 - Os usuários que utilizar à vista como forma de pagamento terá um desconto de 10% 
 
+
+OBS: A key para utilizar o ipgeolocation.io expira no dia 19/05/2019. A key deve ser substituida por uma nova para que o sistema capture as informações de Localização
