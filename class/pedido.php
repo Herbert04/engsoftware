@@ -50,6 +50,15 @@ class Pedido {
         }
     }
 
+    public static function UpdateValorTotal($conn, $idPedido, $valor) {
+        $sql = "UPDATE pedido SET valor_total = '$valor' WHERE (`idPedido` = '$idPedido')";
+        $result = $conn->query($sql);
+        if ($result)
+            return true;
+        else
+            return false;
+    }
+
     public static function UltimoPedido($conn) {
         $sql = "SELECT idPedido FROM pedido ORDER BY idPedido DESC LIMIT 1";
         $result = $conn->query($sql);
@@ -86,14 +95,14 @@ class Pedido {
             return false;
     }
 
-   /* public static function ParcelamentoPedito($valor, $parcelas) {
+    public static function JurosPedido($valor, $parcelas) {
         $valor += $valor * 0.03;
-        return ($valor / $parcelas);
-    }*/
+        return $valor;
+    }
 
-    public static function DescontoDoPedito($valor, $pagamento) {
+    public static function DescontoDoPedido($valor, $pagamento) {
 
-        if ($pagamento == 1) {
+        if ($pagamento == 3) {
             $valor -= $valor * 0.10;
             return $valor;
         } else {

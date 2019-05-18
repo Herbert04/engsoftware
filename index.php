@@ -3,6 +3,7 @@ session_start();
 
 include_once './conexao/database.php';
 include_once './class/pedido.php';
+include_once './class/parcelamento.php';
 ?>
 <!DOCTYPE html>
 <html>
@@ -17,12 +18,12 @@ include_once './class/pedido.php';
             <fieldset>
                 <fieldset class="grupo">
                     <div class="campo">
-                        <label for="nome">Nome</label>
+                        <label for="nome">Nome:</label>
                         <input type="text" id="nome" name="nome" required style="width: 30em" value="">
                     </div>  
                     <div class="campo">
-                        <label for="cpf">CPF</label>
-                        <input type="text" id="cpf" name="cpf" required style="width: 20em" value="">
+                        <label for="cpf">CPF: (xxx.xxx.xxx-xx)</label>
+                        <input type="text" id="cpf" name="cpf" required style="width: 20em" value="" pattern="\d{3}\.\d{3}\.\d{3}-\d{2}">                       
                     </div> 
                 </fieldset>
                 <fieldset class="grupo">
@@ -38,7 +39,7 @@ include_once './class/pedido.php';
 
                     <div class="campo">
                         <label for="valor">Valor da Compra</label>
-                        <input type="number" id="valor" required name="valor" style="width: 10em" value="" min="-1">
+                        <input type="number" id="valor" required name="valor" style="width: 10em" value="" min="-1" step=".01">
                     </div>
                     <div class="campo">
                         <label for="parcelas">Nª De Parcelas</label>
@@ -73,6 +74,7 @@ include_once './class/pedido.php';
                         if (!empty($_SESSION['pedido'])) :
 
                             $pedido = Pedido::ListarPedido($conn, $_SESSION['pedido']);
+                            $parcelado = Parcelamento::ListarParcelamento($conn, $_SESSION['pedido']);
                             foreach ($pedido as $produto):
 
                                 if ($produto['forma_pagamento'] == 3) {
@@ -89,7 +91,14 @@ include_once './class/pedido.php';
                                     <td><?= $produto['cpf'] ?></td>
                                     <td>R$ <?= number_format($produto['valor_total'], 2, ",", ".") ?></td>
                                     <td><?= $pagamento ?></td>
-                                    <td><?= $produto['n_parcelas'] . 'x R$' . number_format($produto['valor_parcelado'], 2, ",", ".") ?> </td>
+                                    <td>
+                                        <?php
+                                        $i = 0;
+                                        foreach ($parcelado as $parcela): $i++;
+                                            ?>
+                                            <?= $i . 'x R$' . number_format($parcela['parcelas'], 2, ",", ".") ?>   </br>                                     
+                                        <?php endforeach; ?>
+                                    </td>
 
                                 </tr>
 

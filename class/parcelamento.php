@@ -33,16 +33,30 @@ class Parcelamento {
             return true;
         }
     }
-    
-    public static function ParcelamentoPedito($valor, $parcelas, $idPedido) {
-        $valor_com_juros = $valor + ($valor * 0.03); 
-        $valor_parcelado = number_format(($valor_com_juros/$parcelas),2); //121,93/4 = 30,4825
-        $diferenca = $valor_com_juros - ($valor_parcelado*$parcelas);
-        
-        for ($index = 0; $index < $parcelas; $index++) {
-            
+
+    public static function ParcelamentoPedido($conn, $valor, $parcelas, $idPedido) {
+        $valor_parcelado = number_format(($valor / $parcelas), 2); //121,93/4 = 30,4825
+        $diferenca = $valor - ($valor_parcelado * $parcelas);
+
+        for ($index = 1; $index <= $parcelas; $index++) {
+            if ($index == 1 && $parcelas != 1) {
+                $valor_comDiferenca = $valor_parcelado + $diferenca;
+                $parcelamento = Parcelamento::create($idPedido, $valor_comDiferenca);
+                $parcelamento->insert($conn);
+            } else {
+                $parcelamento = Parcelamento::create($idPedido, $valor_parcelado);
+                $parcelamento->insert($conn);
+            }
         }
-        
+    }
+
+    public static function ListarParcelamento($conn, $idPedido) {
+        $sql = "SELECT parcelas FROM parcelamento WHERE idPedido = '$idPedido'";
+        $result = $conn->query($sql);
+        if ($result) {
+            return $result->fetchAll(PDO::FETCH_ASSOC);
+        } else
+            return false;
     }
 
 }
